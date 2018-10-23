@@ -2,7 +2,6 @@
 
 // Import vue component
 import ScrollableContainer from '@components/ScrollableContainer.vue';
-import VerticalScrollableContainer from '@components/VerticalScrollableContainer.vue';
 
 // Declare install function executed by Vue.use()
 export function install(Vue) {
@@ -11,7 +10,6 @@ export function install(Vue) {
   }
   install.installed = true;
   Vue.component('scrollable-container', ScrollableContainer);
-  Vue.component('vertical-scrollable-container', VerticalScrollableContainer);
 }
 
 // Create module definition for Vue.use()

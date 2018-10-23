@@ -1,9 +1,11 @@
 <template>
   <div
     ref="root"
-    :is-scrollable-left="scrollableLeft"
-    :is-scrollable-right="scrollableRight"
+    :is-scrollable-from="scrollableFrom"
+    :is-scrollable-to="scrollableTo"
     :scrollable-theme="theme"
+    :is-vertical="isVertical"
+    :is-horizontal="!isVertical"
     class="scrollable-container"
     @scroll="scroll">
     <transition name="notification">
@@ -13,6 +15,8 @@
         class="scrollable-container__notify">
         <div class="scrollable-container__picture">
           <svg
+            :is-vertical="isVertical"
+            :is-horizontal="!isVertical"
             class="scrollable-container__pointer"
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -33,8 +37,25 @@
 <script>
 import { throttle } from 'throttle-debounce';
 
-const isScrollable = (el) => {
+const isScrollable = (el, isVertical = false) => {
+  if (isVertical) {
+    return el.clientHeight < el.scrollHeight;
+  }
   return el.clientWidth < el.scrollWidth;
+};
+
+const canScrollFrom = (el, isVertical = false) => {
+  if (isVertical) {
+    return el.scrollTop !== 0;
+  }
+  return el.scrollLeft !== 0;
+};
+
+const canScrollTo = (el, isVertical = false) => {
+  if (isVertical) {
+    return el.scrollTop + el.offsetHeight !== el.scrollHeight;
+  }
+  return el.scrollLeft + el.offsetWidth !== el.scrollWidth;
 };
 
 const getThemeColor = theme => {
@@ -66,6 +87,10 @@ export default {
     label: {
       type: String,
       default: 'scrollable'
+    },
+    isVertical: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -78,8 +103,8 @@ export default {
         color: getThemeColor(this.theme),
         backgroundColor: getThemeBackgroundColor(this.theme)
       },
-      scrollableLeft: false,
-      scrollableRight: false,
+      scrollableFrom: false,
+      scrollableTo: false,
     };
   },
 
@@ -92,16 +117,16 @@ export default {
     const handleScroll = throttle(150, () => {
       const rect = elRoot.getBoundingClientRect();
       if (rect.top - window.innerHeight < 0) {
-        this.notificationEnabled = isScrollable(elRoot);
+        this.notificationEnabled = isScrollable(elRoot, this.isVertical);
         window.removeEventListener('scroll', handleScroll);
       }
     });
 
     window.addEventListener('scroll', handleScroll);
 
-    if (isScrollable(elRoot)) {
-      this.scrollableLeft = false;
-      this.scrollableRight = true;
+    if (isScrollable(elRoot, this.isVertical)) {
+      this.scrollableFrom = false;
+      this.scrollableTo = true;
     }
   },
 
@@ -111,18 +136,9 @@ export default {
 
       const el = e.target;
 
-      if (isScrollable(el)) {
-        if (el.scrollLeft === 0) {
-          this.scrollableLeft = false;
-        } else {
-          this.scrollableLeft = true;
-        }
-
-        if (el.scrollLeft + el.offsetWidth === el.scrollWidth) {
-          this.scrollableRight = false;
-        } else {
-          this.scrollableRight = true;
-        }
+      if (isScrollable(el, this.isVertical)) {
+        this.scrollableFrom = canScrollFrom(el, this.isVertical);
+        this.scrollableTo = canScrollTo(el, this.isVertical);
       }
     }
   }
@@ -133,8 +149,15 @@ export default {
 $size: 100px;
 
 .scrollable-container {
-  overflow-x: scroll;
   position: relative;
+
+  &[is-horizontal] {
+    overflow-x: scroll;
+  }
+
+  &[is-vertical] {
+    overflow-y: scroll;
+  }
 
   &__notify {
     box-sizing: border-box;
@@ -160,7 +183,14 @@ $size: 100px;
     fill: currentColor;
     transform: scale(1.5);
     transition: all .3s;
-    animation: swipe 1s linear infinite;
+
+    &[is-horizontal] {
+      animation: swipe-horizontal 1s linear infinite;
+    }
+
+    &[is-vertical] {
+      animation: swipe-vertical 1s linear infinite;
+    }
   }
 
   &__message {
@@ -176,26 +206,46 @@ $size: 100px;
     line-height: 1.4;
   }
 
-  &[is-scrollable-left],
-  &[is-scrollable-right] {
+  &[is-scrollable-from],
+  &[is-scrollable-to] {
     background-repeat: no-repeat;
+  }
+  &[is-horizontal][is-scrollable-from],
+  &[is-horizontal][is-scrollable-to] {
     background-size: 16px 150%;
   }
+  &[is-vertical][is-scrollable-from],
+  &[is-vertical][is-scrollable-to] {
+    background-size: 150% 16px;
+  }
 
-  &[is-scrollable-left] {
+  &[is-horizontal][is-scrollable-from] {
     background-image: radial-gradient(at left, rgba(0, 0, 0, .2), transparent 70%);
     background-position: left 50%;
   }
+  &[is-vertical][is-scrollable-from] {
+    background-image: radial-gradient(at top, rgba(0, 0, 0, .2), transparent 70%);
+    background-position: 50% top;
+  }
 
-  &[is-scrollable-right] {
+  &[is-horizontal][is-scrollable-to] {
     background-image: radial-gradient(at right, rgba(0, 0, 0, .2), transparent 70%);
     background-position: right 50%;
   }
+  &[is-vertical][is-scrollable-to] {
+    background-image: radial-gradient(at bottom, rgba(0, 0, 0, .2), transparent 70%);
+    background-position: 50% bottom;
+  }
 
-  &[is-scrollable-left][is-scrollable-right] {
+  &[is-horizontal][is-scrollable-from][is-scrollable-to] {
     background-image: radial-gradient(at left, rgba(0, 0, 0, .2), transparent 70%),
                       radial-gradient(at right, rgba(0, 0, 0, .2), transparent 70%);
     background-position: left 50%, right 50%;
+  }
+  &[is-vertical][is-scrollable-from][is-scrollable-to] {
+    background-image: radial-gradient(at top, rgba(0, 0, 0, .2), transparent 70%),
+                      radial-gradient(at bottom, rgba(0, 0, 0, .2), transparent 70%);
+    background-position: 50% top, 50% bottom;
   }
 }
 
@@ -213,7 +263,7 @@ $size: 100px;
   opacity: 0;
 }
 
-@keyframes swipe {
+@keyframes swipe-horizontal {
   0% {
     left: 50%;
     opacity: 0;
@@ -226,6 +276,23 @@ $size: 100px;
   }
   100% {
     left: -50%;
+    opacity: 0;
+  }
+}
+
+@keyframes swipe-vertical {
+  0% {
+    top: 50%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    top: -30%;
     opacity: 0;
   }
 }
