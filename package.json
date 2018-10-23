@@ -1,7 +1,7 @@
 {
   "name": "vue-scrollable-container",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Vue.js component to show scrollable hint",
   "main": "dist/vue-scrollable-container.umd.js",
   "cdn": "dist/vue-scrollable-container.min.js",
   "config": {
@@ -17,9 +17,17 @@
     "prettier": "prettier --write 'src/**/*.js'",
     "test": "npm run lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inotom/vue-scrollable-container.git"
+  },
   "keywords": [],
-  "author": "iNo (http://www.serendip.ws/)",
+  "author": "inotom (http://www.serendip.ws/)",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/inotom/vue-scrollable-container/issues"
+  },
+  "homepage": "https://github.com/inotom/vue-scrollable-container#readme",
   "devDependencies": {
     "@babel/core": "7.1.2",
     "@babel/preset-env": "7.1.0",
