@@ -11,7 +11,7 @@ A Vue.js component to show scrollable hint.
 
 ### Browser
 
-```
+```html
 <script src="vue.js"></script>
 <script src="vue-scrollable-container.min.js"></script>
 ```
@@ -28,7 +28,7 @@ npm install --save vue-scrollable-container
 
 ### Browser
 
-```
+```html
 <div id="app">
   <scrollable-container>
     Something
@@ -48,7 +48,7 @@ new Vue({
 
 ### SFC
 
-```
+```vue
 <template>
   <scrollable-container>
     Something
