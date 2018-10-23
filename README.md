@@ -2,6 +2,10 @@
 
 A Vue.js component to show scrollable hint.
 
+## Demo
+
+[Demo](http://sandbox.serendip.ws/vue-scrollable-container.html)
+
 
 ## Install
 
@@ -79,4 +83,4 @@ MIT
 
 ## Author
 
-iNo
+inotom
