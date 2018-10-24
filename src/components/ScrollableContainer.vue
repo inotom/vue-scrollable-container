@@ -136,7 +136,7 @@ export default {
   methods: {
     _updateScrollable(elRoot) {
       const rect = elRoot.getBoundingClientRect();
-      const isInsideWindow = rect.top - window.innerHeight < 0;
+      const isInsideWindow = rect.top < window.innerHeight && rect.top > 0;
       if (isInsideWindow) {
         this.notificationEnabled = isScrollable(elRoot, this.isVertical);
       }
