@@ -71,6 +71,7 @@ export default {
 
 | Props          | Type      | Default         | Description               |
 |----------------|-----------|-----------------|---------------------------|
+| `size`         | `Number`  | `100`           | Notification box size(px) |
 | `theme`        | `String`  | `"light"`       | Inner content theme color |
 | `label`        | `String`  | `"scrollable"`  | Notification text         |
 | `is-vertical`  | `Boolean` | `false`         | Scroll direction          |
