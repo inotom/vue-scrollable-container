@@ -114,10 +114,13 @@ export default {
     this.notificationStyle.top = (elRoot.clientHeight - 100) / 2 + 'px';
     this.notificationStyle.left = (elRoot.clientWidth - 100) / 2 + 'px';
 
+    // If the container element is displayed inside the window when the window is loaded, the notification element display.
+    window.addEventListener('load', () => {
+      this._updateScrollable(elRoot);
+    });
+
     const handleScroll = throttle(150, () => {
-      const rect = elRoot.getBoundingClientRect();
-      if (rect.top - window.innerHeight < 0) {
-        this.notificationEnabled = isScrollable(elRoot, this.isVertical);
+      if (this._updateScrollable(elRoot)) {
         window.removeEventListener('scroll', handleScroll);
       }
     });
@@ -131,6 +134,15 @@ export default {
   },
 
   methods: {
+    _updateScrollable(elRoot) {
+      const rect = elRoot.getBoundingClientRect();
+      const isInsideWindow = rect.top - window.innerHeight < 0;
+      if (isInsideWindow) {
+        this.notificationEnabled = isScrollable(elRoot, this.isVertical);
+      }
+      return isInsideWindow;
+    },
+
     scroll(e) {
       this.notificationEnabled = false;
 
