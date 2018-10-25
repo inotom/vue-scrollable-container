@@ -283,7 +283,7 @@ export default {
 
 @keyframes swipe-horizontal {
   0% {
-    left: 50%;
+    transform: translate3d(100%, 0, 0);
     opacity: 0;
   }
   20% {
@@ -293,14 +293,14 @@ export default {
     opacity: 1;
   }
   100% {
-    left: -50%;
+    transform: translate3d(-100%, 0, 0);
     opacity: 0;
   }
 }
 
 @keyframes swipe-vertical {
   0% {
-    top: 50%;
+    transform: translate3d(0, 100%, 0);
     opacity: 0;
   }
   20% {
@@ -310,7 +310,7 @@ export default {
     opacity: 1;
   }
   100% {
-    top: -30%;
+    transform: translate3d(0, -60%, 0);
     opacity: 0;
   }
 }
