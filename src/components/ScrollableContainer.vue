@@ -200,7 +200,6 @@ export default {
   &__pointer {
     position: relative;
     fill: currentColor;
-    transform: scale(1.5);
     transition: all .3s;
 
     &[is-horizontal] {
@@ -283,7 +282,7 @@ export default {
 
 @keyframes swipe-horizontal {
   0% {
-    transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 25%, 0) scale(1.5);
     opacity: 0;
   }
   20% {
@@ -293,14 +292,14 @@ export default {
     opacity: 1;
   }
   100% {
-    transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 25%, 0) scale(1.5);
     opacity: 0;
   }
 }
 
 @keyframes swipe-vertical {
   0% {
-    transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 80%, 0) scale(1.5);
     opacity: 0;
   }
   20% {
@@ -310,7 +309,7 @@ export default {
     opacity: 1;
   }
   100% {
-    transform: translate3d(0, -60%, 0);
+    transform: translate3d(0, -50%, 0) scale(1.5);
     opacity: 0;
   }
 }
