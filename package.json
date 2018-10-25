@@ -21,7 +21,9 @@
     "type": "git",
     "url": "git+https://github.com/inotom/vue-scrollable-container.git"
   },
-  "keywords": [],
+  "keywords": [
+    "vue"
+  ],
   "author": "inotom (http://www.serendip.ws/)",
   "license": "MIT",
   "bugs": {
