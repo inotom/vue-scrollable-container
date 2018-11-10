@@ -102,6 +102,7 @@ export default {
 
   data() {
     return {
+      once: false,
       notificationEnabled: false,
       notificationStyle: {
         top: 0,
@@ -149,7 +150,8 @@ export default {
     _updateScrollable(elRoot) {
       const rect = elRoot.getBoundingClientRect();
       const isInsideWindow = rect.top < window.innerHeight && rect.top > 0;
-      if (isInsideWindow) {
+      if (!this.once && isInsideWindow) {
+        this.once = true;
         this.notificationEnabled = isScrollable(elRoot, this.isVertical);
       }
       return isInsideWindow;
