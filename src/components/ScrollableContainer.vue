@@ -1,38 +1,53 @@
 <template>
   <div
-    ref="root"
-    :is-scrollable-from="scrollableFrom"
-    :is-scrollable-to="scrollableTo"
     :scrollable-theme="theme"
-    :is-vertical="isVertical"
-    :is-horizontal="!isVertical"
-    class="scrollable-container"
-    @scroll="scroll">
-    <transition name="notification">
-      <div
-        v-if="notificationEnabled"
-        :style="notificationStyle"
-        class="scrollable-container__notify">
-        <div class="scrollable-container__picture">
-          <svg
-            :is-vertical="isVertical"
-            :is-horizontal="!isVertical"
-            :width="size * 0.24"
-            :height="size * 0.24"
-            class="scrollable-container__pointer"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24">
-            <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"/>
-          </svg>
-        </div>
+    class="scrollable-container">
+    <div
+      ref="root"
+      :is-vertical="isVertical"
+      :is-horizontal="!isVertical"
+      class="scrollable-container__content"
+      @scroll="scroll">
+      <transition name="notification">
         <div
-          :style="messageStyle"
-          class="scrollable-container__message">
-          {{ label }}
+          v-if="notificationEnabled"
+          :style="notificationStyle"
+          class="scrollable-container__notify">
+          <div class="scrollable-container__picture">
+            <svg
+              :is-vertical="isVertical"
+              :is-horizontal="!isVertical"
+              :width="size * 0.24"
+              :height="size * 0.24"
+              class="scrollable-container__pointer"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24">
+              <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"/>
+            </svg>
+          </div>
+          <div
+            :style="messageStyle"
+            class="scrollable-container__message">
+            {{ label }}
+          </div>
         </div>
-      </div>
+      </transition>
+      <slot/>
+    </div>
+    <transition name="shadow-from">
+      <div
+        v-if="scrollableFrom"
+        :is-vertical="isVertical"
+        :is-horizontal="!isVertical"
+        class="scrollable-container__shadow--from"/>
     </transition>
-    <slot/>
+    <transition name="shadow-to">
+      <div
+        v-if="scrollableTo"
+        :is-vertical="isVertical"
+        :is-horizontal="!isVertical"
+        class="scrollable-container__shadow--to"/>
+    </transition>
   </div>
 </template>
 
@@ -175,17 +190,23 @@ export default {
 .scrollable-container {
   position: relative;
 
-  &[is-horizontal] {
-    overflow-x: scroll;
-  }
+  &__content {
+    position: relative;
+    z-index: 1;
 
-  &[is-vertical] {
-    overflow-y: scroll;
+    &[is-horizontal] {
+      overflow-x: scroll;
+    }
+
+    &[is-vertical] {
+      overflow-y: scroll;
+    }
   }
 
   &__notify {
     box-sizing: border-box;
     position: absolute;
+    z-index: 2;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
   }
 
@@ -225,46 +246,62 @@ export default {
     line-height: 1.4;
   }
 
-  &[is-scrollable-from],
-  &[is-scrollable-to] {
+  $shadow-size: 16px;
+
+  &__shadow {
+    position: absolute;
+    z-index: 3;
     background-repeat: no-repeat;
-  }
-  &[is-horizontal][is-scrollable-from],
-  &[is-horizontal][is-scrollable-to] {
-    background-size: 16px 150%;
-  }
-  &[is-vertical][is-scrollable-from],
-  &[is-vertical][is-scrollable-to] {
-    background-size: 150% 16px;
-  }
 
-  &[is-horizontal][is-scrollable-from] {
-    background-image: radial-gradient(at left, rgba(0, 0, 0, .2), transparent 70%);
-    background-position: left 50%;
-  }
-  &[is-vertical][is-scrollable-from] {
-    background-image: radial-gradient(at top, rgba(0, 0, 0, .2), transparent 70%);
-    background-position: 50% top;
-  }
+    &[is-horizontal] {
+      background-size: $shadow-size 150%;
+    }
 
-  &[is-horizontal][is-scrollable-to] {
-    background-image: radial-gradient(at right, rgba(0, 0, 0, .2), transparent 70%);
-    background-position: right 50%;
-  }
-  &[is-vertical][is-scrollable-to] {
-    background-image: radial-gradient(at bottom, rgba(0, 0, 0, .2), transparent 70%);
-    background-position: 50% bottom;
-  }
+    &[is-vertical] {
+      background-size: 150% $shadow-size;
+    }
 
-  &[is-horizontal][is-scrollable-from][is-scrollable-to] {
-    background-image: radial-gradient(at left, rgba(0, 0, 0, .2), transparent 70%),
-                      radial-gradient(at right, rgba(0, 0, 0, .2), transparent 70%);
-    background-position: left 50%, right 50%;
-  }
-  &[is-vertical][is-scrollable-from][is-scrollable-to] {
-    background-image: radial-gradient(at top, rgba(0, 0, 0, .2), transparent 70%),
-                      radial-gradient(at bottom, rgba(0, 0, 0, .2), transparent 70%);
-    background-position: 50% top, 50% bottom;
+    $shadow: #{&};
+
+    &--from {
+      @extend #{$shadow};
+      top: 0;
+      left: 0;
+
+      &[is-vertical] {
+        width: 100%;
+        height: $shadow-size;
+        background-image: radial-gradient(at top, rgba(0, 0, 0, .2), transparent 70%);
+        background-position: 50% top;
+      }
+
+      &[is-horizontal] {
+        width: $shadow-size;
+        height: 100%;
+        background-image: radial-gradient(at left, rgba(0, 0, 0, .2), transparent 70%);
+        background-position: left 50%;
+      }
+    }
+
+    &--to {
+      @extend #{$shadow};
+      bottom: 0;
+      right: 0;
+
+      &[is-vertical] {
+        width: 100%;
+        height: $shadow-size;
+        background-image: radial-gradient(at bottom, rgba(0, 0, 0, .2), transparent 70%);
+        background-position: 50% bottom;
+      }
+
+      &[is-horizontal] {
+        width: $shadow-size;
+        height: 100%;
+        background-image: radial-gradient(at right, rgba(0, 0, 0, .2), transparent 70%);
+        background-position: right 50%;
+      }
+    }
   }
 }
 
@@ -279,6 +316,24 @@ export default {
 
 .notification-enter,
 .notification-leave-to {
+  opacity: 0;
+}
+
+.shadow-from-enter-active,
+.shadow-from-leave-active {
+  transition: opacity .3s;
+}
+.shadow-from-enter,
+.shadow-from-leave-to {
+  opacity: 0;
+}
+
+.shadow-to-enter-active,
+.shadow-to-leave-active {
+  transition: opacity .3s;
+}
+.shadow-to-enter,
+.shadow-to-leave-to {
   opacity: 0;
 }
 
