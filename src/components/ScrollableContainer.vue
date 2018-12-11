@@ -6,6 +6,7 @@
       ref="root"
       :is-vertical="isVertical"
       :is-horizontal="!isVertical"
+      :is-scrollable="isScrollable"
       class="scrollable-container__content"
       @scroll="scroll">
       <transition name="notification">
@@ -136,6 +137,12 @@ export default {
     };
   },
 
+  computed: {
+    isScrollable() {
+      return this.scrollableFrom || this.scrollableTo;
+    }
+  },
+
   mounted() {
     const elRoot = this.$refs.root;
 
@@ -193,11 +200,11 @@ export default {
   &__content {
     position: relative;
 
-    &[is-horizontal] {
+    &[is-horizontal][is-scrollable] {
       overflow-x: scroll;
     }
 
-    &[is-vertical] {
+    &[is-vertical][is-scrollable] {
       overflow-y: scroll;
     }
   }
