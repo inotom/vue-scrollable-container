@@ -192,7 +192,6 @@ export default {
 
   &__content {
     position: relative;
-    z-index: 1;
 
     &[is-horizontal] {
       overflow-x: scroll;
@@ -206,7 +205,6 @@ export default {
   &__notify {
     box-sizing: border-box;
     position: absolute;
-    z-index: 2;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
   }
 
@@ -250,7 +248,6 @@ export default {
 
   &__shadow {
     position: absolute;
-    z-index: 3;
     background-repeat: no-repeat;
 
     &[is-horizontal] {
