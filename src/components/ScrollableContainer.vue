@@ -9,6 +9,7 @@
       :is-scrollable="isScrollable"
       class="scrollable-container__content"
       @scroll="scroll">
+      <slot/>
       <transition name="notification">
         <div
           v-if="notificationEnabled"
@@ -33,7 +34,6 @@
           </div>
         </div>
       </transition>
-      <slot/>
     </div>
     <transition name="shadow-from">
       <div
