@@ -40,6 +40,7 @@
         v-if="scrollableFrom"
         :is-vertical="isVertical"
         :is-horizontal="!isVertical"
+        :style="{left: shadowFromX}"
         class="scrollable-container__shadow--from"/>
     </transition>
     <transition name="shadow-to">
@@ -47,6 +48,7 @@
         v-if="scrollableTo"
         :is-vertical="isVertical"
         :is-horizontal="!isVertical"
+        :style="{right: shadowToX}"
         class="scrollable-container__shadow--to"/>
     </transition>
   </div>
@@ -113,6 +115,14 @@ export default {
     isVertical: {
       type: Boolean,
       default: false
+    },
+    shadowFromX: {
+      type: String,
+      default: '0'
+    },
+    shadowToX: {
+      type: String,
+      default: '0'
     }
   },
 

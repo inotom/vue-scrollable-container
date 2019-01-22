@@ -69,12 +69,14 @@ export default {
 
 ## Props
 
-| Props          | Type      | Default         | Description               |
-|----------------|-----------|-----------------|---------------------------|
-| `size`         | `Number`  | `100`           | Notification box size(px) |
-| `theme`        | `String`  | `"light"`       | Inner content theme color |
-| `label`        | `String`  | `"scrollable"`  | Notification text         |
-| `is-vertical`  | `Boolean` | `false`         | Scroll direction          |
+| Props           | Type      | Default         | Description                   |
+|-----------------|-----------|-----------------|-------------------------------|
+| `size`          | `Number`  | `100`           | Notification box size(px)     |
+| `theme`         | `String`  | `"light"`       | Inner content theme color     |
+| `label`         | `String`  | `"scrollable"`  | Notification text             |
+| `is-vertical`   | `Boolean` | `false`         | Scroll direction              |
+| `shadow-from-x` | `String`  | `"0"`           | Left position of first shadow |
+| `shadow-to-x`   | `String`  | `"0"`           | Right position of last shadow |
 
 
 ## License

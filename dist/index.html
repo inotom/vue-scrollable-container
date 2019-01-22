@@ -52,6 +52,26 @@ hr {
 .table--dark th {
   background-color: #633;
 }
+.table--sticky,
+.table--sticky td,
+.table--sticky th {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.table__head--start,
+.table__head--end {
+  box-sizing: border-box;
+  position: sticky;
+}
+.table__head--start {
+  left: 0;
+  width: 10em;
+}
+.table__head--end {
+  right: 0;
+  width: 7em;
+}
+
 .vertical-scroll-container {
   max-height: 200px;
 }
@@ -93,7 +113,6 @@ hr {
         </tbody>
       </table>
     </scrollable-container>
-
 
     <hr>
 
@@ -274,6 +293,40 @@ hr {
               <td>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
               </td>
+            </tr>
+          </tbody>
+        </table>
+      </scrollable-container>
+    </div>
+
+    <hr>
+
+    <h2>fixed cell</h2>
+
+    <div class="table-container">
+      <scrollable-container shadow-from-x="10em" shadow-to-x="7em">
+        <table class="table table--wide table--sticky">
+          <tbody>
+            <tr>
+              <th class="table__head--start">label</th>
+              <td>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </td>
+              <th class="table__head--end">label</th>
+            </tr>
+            <tr>
+              <th class="table__head--start">label</th>
+              <td>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </td>
+              <th class="table__head--end">label</th>
+            </tr>
+            <tr>
+              <th class="table__head--start">label</th>
+              <td>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </td>
+              <th class="table__head--end">label</th>
             </tr>
           </tbody>
         </table>
