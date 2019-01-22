@@ -8,7 +8,7 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
 const autoprefixer = require('autoprefixer');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const _config = merge(common, {
   mode: 'production',
@@ -46,19 +46,22 @@ const _config = merge(common, {
   },
   devtool: 'source-map',
   plugins: [
-    new UglifyJsPlugin({
-      sourceMap: true,
-      uglifyOptions: {
-        ecma: 8,
-        output: {
-          comments: 'some'
-        }
-      }
-    }),
     new webpack.BannerPlugin({
       banner: `${pkg.name} v${pkg.version} ${pkg.author} | ${pkg.license}`
     })
-  ]
+  ],
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        sourceMap: true,
+        parallel: true,
+        terserOptions: {
+          ecma: 8
+        }
+      })
+    ]
+  }
 });
 
 const config = [
