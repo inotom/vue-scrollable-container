@@ -30,7 +30,13 @@
     "indent": ["error", 2, { "SwitchCase": 1 } ],
     "linebreak-style": [2, "unix"],
     "quotes": [2, "single"],
-    "comma-dangle": [2, "only-multiline"],
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "ignore"
+    }],
     "curly": 2,
     "camelcase": 2,
     "brace-style": 2,

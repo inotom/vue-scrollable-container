@@ -102,28 +102,28 @@ export default {
   props: {
     size: {
       type: Number,
-      default: 100
+      default: 100,
     },
     theme: {
       type: String,
-      default: 'light'
+      default: 'light',
     },
     label: {
       type: String,
-      default: 'scrollable'
+      default: 'scrollable',
     },
     isVertical: {
       type: Boolean,
-      default: false
+      default: false,
     },
     shadowFromX: {
       type: String,
-      default: '0'
+      default: '0',
     },
     shadowToX: {
       type: String,
-      default: '0'
-    }
+      default: '0',
+    },
   },
 
   data() {
@@ -137,10 +137,10 @@ export default {
         height: this.size + 'px',
         color: getThemeColor(this.theme),
         backgroundColor: getThemeBackgroundColor(this.theme),
-        borderRadius: this.size * 0.1 + 'px'
+        borderRadius: this.size * 0.1 + 'px',
       },
       messageStyle: {
-        fontSize: this.size * 0.12 + 'px'
+        fontSize: this.size * 0.12 + 'px',
       },
       scrollableFrom: false,
       scrollableTo: false,
@@ -150,7 +150,7 @@ export default {
   computed: {
     isScrollable() {
       return this.scrollableFrom || this.scrollableTo;
-    }
+    },
   },
 
   mounted() {
@@ -198,8 +198,8 @@ export default {
         this.scrollableFrom = canScrollFrom(el, this.isVertical);
         this.scrollableTo = canScrollTo(el, this.isVertical);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
