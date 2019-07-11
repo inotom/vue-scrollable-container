@@ -16,6 +16,11 @@
     }
   },
   "rules": {
+    "vue/singleline-html-element-content-newline": ["error", {
+      "ignoreWhenNoAttributes": true,
+      "ignoreWhenEmpty": true,
+      "ignores": ["pre", "textarea", "strong", "span", "slot"]
+    }],
     "strict": [2, "function"],
     "semi": 2,
     "eqeqeq": 2,
