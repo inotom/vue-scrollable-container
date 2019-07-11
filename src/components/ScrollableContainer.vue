@@ -1,20 +1,23 @@
 <template>
   <div
     :scrollable-theme="theme"
-    class="scrollable-container">
+    class="scrollable-container"
+  >
     <div
       ref="root"
       :is-vertical="isVertical"
       :is-horizontal="!isVertical"
       :is-scrollable="isScrollable"
       class="scrollable-container__content"
-      @scroll="scroll">
-      <slot/>
+      @scroll="scroll"
+    >
+      <slot />
       <transition name="notification">
         <div
           v-if="notificationEnabled"
           :style="notificationStyle"
-          class="scrollable-container__notify">
+          class="scrollable-container__notify"
+        >
           <div class="scrollable-container__picture">
             <svg
               :is-vertical="isVertical"
@@ -23,13 +26,17 @@
               :height="size * 0.24"
               class="scrollable-container__pointer"
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24">
-              <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"/>
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"
+              />
             </svg>
           </div>
           <div
             :style="messageStyle"
-            class="scrollable-container__message">
+            class="scrollable-container__message"
+          >
             {{ label }}
           </div>
         </div>
@@ -41,7 +48,8 @@
         :is-vertical="isVertical"
         :is-horizontal="!isVertical"
         :style="{left: shadowFromX}"
-        class="scrollable-container__shadow--from"/>
+        class="scrollable-container__shadow--from"
+      />
     </transition>
     <transition name="shadow-to">
       <div
@@ -49,7 +57,8 @@
         :is-vertical="isVertical"
         :is-horizontal="!isVertical"
         :style="{right: shadowToX}"
-        class="scrollable-container__shadow--to"/>
+        class="scrollable-container__shadow--to"
+      />
     </transition>
   </div>
 </template>
@@ -102,28 +111,28 @@ export default {
   props: {
     size: {
       type: Number,
-      default: 100
+      default: 100,
     },
     theme: {
       type: String,
-      default: 'light'
+      default: 'light',
     },
     label: {
       type: String,
-      default: 'scrollable'
+      default: 'scrollable',
     },
     isVertical: {
       type: Boolean,
-      default: false
+      default: false,
     },
     shadowFromX: {
       type: String,
-      default: '0'
+      default: '0',
     },
     shadowToX: {
       type: String,
-      default: '0'
-    }
+      default: '0',
+    },
   },
 
   data() {
@@ -137,10 +146,10 @@ export default {
         height: this.size + 'px',
         color: getThemeColor(this.theme),
         backgroundColor: getThemeBackgroundColor(this.theme),
-        borderRadius: this.size * 0.1 + 'px'
+        borderRadius: this.size * 0.1 + 'px',
       },
       messageStyle: {
-        fontSize: this.size * 0.12 + 'px'
+        fontSize: this.size * 0.12 + 'px',
       },
       scrollableFrom: false,
       scrollableTo: false,
@@ -150,35 +159,41 @@ export default {
   computed: {
     isScrollable() {
       return this.scrollableFrom || this.scrollableTo;
-    }
+    },
   },
 
   mounted() {
-    const elRoot = this.$refs.root;
-
-    this.notificationStyle.top = (elRoot.clientHeight - this.size) / 2 + 'px';
-    this.notificationStyle.left = (elRoot.clientWidth - this.size) / 2 + 'px';
-
-    // If the container element is displayed inside the window when the window is loaded, the notification element display.
-    window.addEventListener('load', () => {
-      this._updateScrollable(elRoot);
-    });
-
-    const handleScroll = throttle(150, () => {
-      if (this._updateScrollable(elRoot)) {
-        window.removeEventListener('scroll', handleScroll);
-      }
-    });
-
-    window.addEventListener('scroll', handleScroll);
-
-    if (isScrollable(elRoot, this.isVertical)) {
-      this.scrollableFrom = false;
-      this.scrollableTo = true;
-    }
+    this.initialize();
   },
 
   methods: {
+    initialize() {
+      const elRoot = this.$refs.root;
+
+      this.once = false;
+
+      this.notificationStyle.top = (elRoot.clientHeight - this.size) / 2 + 'px';
+      this.notificationStyle.left = (elRoot.clientWidth - this.size) / 2 + 'px';
+
+      // If the container element is displayed inside the window when the window is loaded, the notification element display.
+      window.addEventListener('load', () => {
+        this._updateScrollable(elRoot);
+      });
+
+      const handleScroll = throttle(150, () => {
+        if (this._updateScrollable(elRoot)) {
+          window.removeEventListener('scroll', handleScroll);
+        }
+      });
+
+      window.addEventListener('scroll', handleScroll);
+
+      if (isScrollable(elRoot, this.isVertical)) {
+        this.scrollableFrom = false;
+        this.scrollableTo = true;
+      }
+    },
+
     _updateScrollable(elRoot) {
       const rect = elRoot.getBoundingClientRect();
       const isInsideWindow = rect.top < window.innerHeight && rect.top > 0;
@@ -198,8 +213,8 @@ export default {
         this.scrollableFrom = canScrollFrom(el, this.isVertical);
         this.scrollableTo = canScrollTo(el, this.isVertical);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

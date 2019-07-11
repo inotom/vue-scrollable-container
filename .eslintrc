@@ -16,6 +16,11 @@
     }
   },
   "rules": {
+    "vue/singleline-html-element-content-newline": ["error", {
+      "ignoreWhenNoAttributes": true,
+      "ignoreWhenEmpty": true,
+      "ignores": ["pre", "textarea", "strong", "span", "slot"]
+    }],
     "strict": [2, "function"],
     "semi": 2,
     "eqeqeq": 2,
@@ -30,7 +35,13 @@
     "indent": ["error", 2, { "SwitchCase": 1 } ],
     "linebreak-style": [2, "unix"],
     "quotes": [2, "single"],
-    "comma-dangle": [2, "only-multiline"],
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "ignore"
+    }],
     "curly": 2,
     "camelcase": 2,
     "brace-style": 2,
