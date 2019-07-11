@@ -163,31 +163,37 @@ export default {
   },
 
   mounted() {
-    const elRoot = this.$refs.root;
-
-    this.notificationStyle.top = (elRoot.clientHeight - this.size) / 2 + 'px';
-    this.notificationStyle.left = (elRoot.clientWidth - this.size) / 2 + 'px';
-
-    // If the container element is displayed inside the window when the window is loaded, the notification element display.
-    window.addEventListener('load', () => {
-      this._updateScrollable(elRoot);
-    });
-
-    const handleScroll = throttle(150, () => {
-      if (this._updateScrollable(elRoot)) {
-        window.removeEventListener('scroll', handleScroll);
-      }
-    });
-
-    window.addEventListener('scroll', handleScroll);
-
-    if (isScrollable(elRoot, this.isVertical)) {
-      this.scrollableFrom = false;
-      this.scrollableTo = true;
-    }
+    this.initialize();
   },
 
   methods: {
+    initialize() {
+      const elRoot = this.$refs.root;
+
+      this.once = false;
+
+      this.notificationStyle.top = (elRoot.clientHeight - this.size) / 2 + 'px';
+      this.notificationStyle.left = (elRoot.clientWidth - this.size) / 2 + 'px';
+
+      // If the container element is displayed inside the window when the window is loaded, the notification element display.
+      window.addEventListener('load', () => {
+        this._updateScrollable(elRoot);
+      });
+
+      const handleScroll = throttle(150, () => {
+        if (this._updateScrollable(elRoot)) {
+          window.removeEventListener('scroll', handleScroll);
+        }
+      });
+
+      window.addEventListener('scroll', handleScroll);
+
+      if (isScrollable(elRoot, this.isVertical)) {
+        this.scrollableFrom = false;
+        this.scrollableTo = true;
+      }
+    },
+
     _updateScrollable(elRoot) {
       const rect = elRoot.getBoundingClientRect();
       const isInsideWindow = rect.top < window.innerHeight && rect.top > 0;
