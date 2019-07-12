@@ -170,10 +170,7 @@ export default {
     initialize() {
       const elRoot = this.$refs.root;
 
-      this.once = false;
-
-      this.notificationStyle.top = (elRoot.clientHeight - this.size) / 2 + 'px';
-      this.notificationStyle.left = (elRoot.clientWidth - this.size) / 2 + 'px';
+      this.reset();
 
       // If the container element is displayed inside the window when the window is loaded, the notification element display.
       window.addEventListener('load', () => {
@@ -187,11 +184,21 @@ export default {
       });
 
       window.addEventListener('scroll', handleScroll);
+    },
+
+    reset() {
+      const elRoot = this.$refs.root;
+      this.once = false;
+
+      this.notificationStyle.top = (elRoot.clientHeight - this.size) / 2 + 'px';
+      this.notificationStyle.left = (elRoot.clientWidth - this.size) / 2 + 'px';
 
       if (isScrollable(elRoot, this.isVertical)) {
         this.scrollableFrom = false;
         this.scrollableTo = true;
       }
+
+      this._updateScrollable(elRoot);
     },
 
     _updateScrollable(elRoot) {
