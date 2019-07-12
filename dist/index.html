@@ -346,7 +346,7 @@ hr {
     <async-block></async-block>
 
   </div>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
 <script src="vue-scrollable-container.min.js"></script>
 
 <script type="text/x-template" id="async-block-template">
@@ -361,10 +361,13 @@ hr {
           :key="index"
           class="async-block__lines"
         >
-          {{ item }}
+          LINE{{ index }} - {{ item }}
         </div>
       </div>
     </scrollable-container>
+    <div>
+      <input type="button" value="Update" @click="updateLine">
+    </div>
   </div>
 </script>
 
@@ -374,14 +377,14 @@ Vue.use(ScrollableContainer);
 Vue.component('async-block', {
   template: '#async-block-template',
 
-  data() {
+  data: function() {
     return {
       lines: [],
     };
   },
 
-  mounted() {
-    setTimeout(() => {
+  mounted: function() {
+    setTimeout(function() {
       this.lines = [
         'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
         'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
@@ -389,10 +392,19 @@ Vue.component('async-block', {
         'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
         'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
       ];
-      this.$nextTick(() => {
-        this.$refs.asyncBlockScrollableContainer.initialize();
+      this.$nextTick(function() {
+        this.$refs.asyncBlockScrollableContainer.reset();
       });
-    }, 1000);
+    }.bind(this), 1000);
+  },
+
+  methods: {
+    updateLine:function() {
+      this.lines.push('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+      this.$nextTick(function() {
+        this.$refs.asyncBlockScrollableContainer.reset();
+      });
+    },
   },
 });
 
