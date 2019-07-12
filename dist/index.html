@@ -9,6 +9,7 @@ html {
   font-size: 62.5%;
 }
 body {
+  margin-bottom: 5em;
   font-size: 1.2rem;
 }
 hr {
@@ -84,6 +85,30 @@ hr {
 }
 
 .async-block {
+  max-height: 200px;
+}
+
+.tab {
+  display: flex;
+  margin: .5em 0;
+}
+.tab__item {
+  margin-right: .5em;
+  padding: 1em;
+  color: #fff;
+  background-color: #999;
+  text-decoration: none;
+}
+.tab__item[is-selected] {
+  background-color: #966;
+}
+
+.tab-block--loading,
+.tab-block {
+  height: 200px;
+}
+
+.tab-content {
   max-height: 200px;
 }
 </style>
@@ -345,6 +370,12 @@ hr {
 
     <async-block></async-block>
 
+    <hr>
+
+    <h2>tab swich scroll box</h2>
+
+    <tab-switch></tab-switch>
+
   </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
 <script src="vue-scrollable-container.min.js"></script>
@@ -367,6 +398,48 @@ hr {
     </scrollable-container>
     <div>
       <input type="button" value="Update" @click="updateLine">
+    </div>
+  </div>
+</script>
+
+<script type="text/x-template" id="tab-switch-template">
+  <div>
+    <div class="tab">
+      <a
+        class="tab__item"
+        href="#"
+        v-for="(item, index) in pages"
+        :key="item.id"
+        :is-selected="selectedIndex === index"
+        @click.prevent="selectTab(index)"
+      >
+        TAB{{ index }}
+      </a>
+    </div>
+    <div
+      class="tab-block--loading"
+      v-if="isLoading"
+    >
+      Loading...
+    </div>
+    <div
+      class="tab-block"
+      v-else
+    >
+      <scrollable-container
+        :is-vertical="true"
+        ref="tabScrollableContainer"
+      >
+        <div class="tab-content">
+          <div
+            v-for="(line, index) in lines"
+            :key="index"
+            class="tab-content__line"
+          >
+            {{ line }}
+          </div>
+        </div>
+      </scrollable-container>
     </div>
   </div>
 </script>
@@ -404,6 +477,58 @@ Vue.component('async-block', {
       this.$nextTick(function() {
         this.$refs.asyncBlockScrollableContainer.reset();
       });
+    },
+  },
+});
+
+Vue.component('tab-switch', {
+  template: '#tab-switch-template',
+
+  data: function() {
+    return {
+      isLoading: false,
+      selectedIndex: 0,
+      pages: [
+        {
+          id: 0,
+          lines: [
+            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+          ],
+        },
+        {
+          id: 1,
+          lines: [
+            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+          ],
+        },
+      ],
+    };
+  },
+
+  computed: {
+    lines: function() {
+      return this.pages[this.selectedIndex].lines;
+    },
+  },
+
+  mounted: function() {
+    this.selectTab(0);
+  },
+
+  methods: {
+    selectTab: function(index) {
+      this.isLoading = true;
+      setTimeout(function() {
+        this.isLoading = false;
+        this.selectedIndex = index;
+        this.$nextTick(function() {
+          this.$refs.tabScrollableContainer.reset();
+        });
+      }.bind(this), 500);
     },
   },
 });
