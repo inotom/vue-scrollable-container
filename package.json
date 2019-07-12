@@ -1,6 +1,6 @@
 {
   "name": "vue-scrollable-container",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "A Vue.js component to show scrollable hint",
   "main": "dist/vue-scrollable-container.umd.js",
   "cdn": "dist/vue-scrollable-container.min.js",
