@@ -153,6 +153,7 @@ export default {
       },
       scrollableFrom: false,
       scrollableTo: false,
+      scrollHandler: null,
     };
   },
 
@@ -166,6 +167,14 @@ export default {
     this.initialize();
   },
 
+  beforeDestroy() {
+    window.removeEventListener('load', this._updateScrollableHandler);
+
+    if (this.scrollHandler) {
+      window.removeEventListener('scroll', this.scrollHandler);
+    }
+  },
+
   methods: {
     initialize() {
       const elRoot = this.$refs.root;
@@ -173,17 +182,17 @@ export default {
       this.reset();
 
       // If the container element is displayed inside the window when the window is loaded, the notification element display.
-      window.addEventListener('load', () => {
-        this._updateScrollable(elRoot);
-      });
+      window.addEventListener('load', this._updateScrollableHandler);
 
       const handleScroll = throttle(150, () => {
         if (this._updateScrollable(elRoot)) {
           window.removeEventListener('scroll', handleScroll);
+          this.scrollHandler = null;
         }
       });
 
       window.addEventListener('scroll', handleScroll);
+      this.scrollHandler = handleScroll;
     },
 
     reset() {
@@ -209,6 +218,13 @@ export default {
         this.notificationEnabled = isScrollable(elRoot, this.isVertical);
       }
       return isInsideWindow;
+    },
+
+    _updateScrollableHandler() {
+      const elRoot = this.$refs.root;
+      if (elRoot) {
+        this._updateScrollable(elRoot);
+      }
     },
 
     scroll(e) {
