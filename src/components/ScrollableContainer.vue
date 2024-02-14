@@ -1,13 +1,188 @@
+<script setup lang="ts">
+import { computed, onMounted, onBeforeUnmount, reactive, ref } from 'vue';
+import { throttle } from 'throttle-debounce';
+
+const isElementScrollable = (el: HTMLElement, isVertical = false) => {
+  if (isVertical) {
+    return el.clientHeight < el.scrollHeight;
+  }
+  return el.clientWidth < el.scrollWidth;
+};
+
+const canScrollFrom = (el: HTMLElement, isVertical = false) => {
+  if (isVertical) {
+    return el.scrollTop !== 0;
+  }
+  return el.scrollLeft !== 0;
+};
+
+const canScrollTo = (el: HTMLElement, isVertical = false) => {
+  if (isVertical) {
+    return el.scrollTop + el.offsetHeight !== el.scrollHeight;
+  }
+  return el.scrollLeft + el.offsetWidth !== el.scrollWidth;
+};
+
+const getThemeColor = (theme: string) => {
+  switch (theme) {
+    case 'light':
+      return '#fff';
+    case 'dark':
+      return '#111';
+  }
+  return '#fff';
+};
+
+const getThemeBackgroundColor = (theme: string) => {
+  switch (theme) {
+    case 'light':
+      return 'rgba(0, 0, 0, .5)';
+    case 'dark':
+      return 'rgba(255, 255, 255, .8)';
+  }
+  return 'rgba(0, 0, 0, .5)';
+};
+
+interface Props {
+  size?: number;
+  theme?: string;
+  label?: string;
+  isVertical?: boolean;
+  shadowFromX?: string;
+  shadowToX?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  size: 100,
+  theme: 'light',
+  label: 'scrollable',
+  isVertical: false,
+  shadowFromX: '0',
+  shadowToX: '0',
+});
+
+const elRoot = ref(null);
+const once = ref(false);
+const notificationEnabled = ref(false);
+const scrollableFrom = ref(false);
+const scrollableTo = ref(false);
+const scrollHandler = ref(null as null | throttle<() => void>);
+
+const notificationStyle = reactive({
+    top: '0',
+    left: '0',
+    width: `${props.size}px`,
+    height: `${props.size}px`,
+    color: getThemeColor(props.theme),
+    backgroundColor: getThemeBackgroundColor(props.theme),
+    borderRadius: `${props.size * 0.1}px`,
+});
+
+const messageStyle = computed(() => {
+  return {
+    fontSize: `${props.size} * 0.12}px`,
+  };
+});
+
+const isScrollable = computed(() => scrollableFrom.value || scrollableTo.value);
+
+const initialize = () => {
+  if (!elRoot.value) {
+    return;
+  }
+
+  const el = elRoot.value as HTMLElement;
+
+  reset();
+
+  // If the container element is displayed inside the window when the window is loaded, the notification element display.
+  window.addEventListener('load', _updateScrollableHandler);
+
+  const handleScroll = throttle(150, () => {
+    if (_updateScrollable(el)) {
+      window.removeEventListener('scroll', handleScroll);
+      scrollHandler.value = null;
+    }
+  });
+
+  window.addEventListener('scroll', handleScroll);
+  scrollHandler.value = handleScroll;
+};
+
+const reset = () => {
+  if (!elRoot.value) {
+    return;
+  }
+
+  const el = elRoot.value as HTMLElement;
+  once.value = false;
+
+  notificationStyle.top = `${(el.clientHeight - props.size) / 2}px`;
+  notificationStyle.left = `${(el.clientWidth - props.size) / 2}px`;
+
+  if (isElementScrollable(el, props.isVertical)) {
+    scrollableFrom.value = false;
+    scrollableTo.value = true;
+  }
+
+  _updateScrollable(el);
+};
+
+defineExpose({
+  reset,
+});
+
+const _updateScrollable = (elRoot: HTMLElement) => {
+  const rect = elRoot.getBoundingClientRect();
+  const isInsideWindow = rect.top < window.innerHeight && rect.top > 0;
+  if (!once.value && isInsideWindow) {
+    once.value = true;
+    notificationEnabled.value = isElementScrollable(elRoot, props.isVertical);
+  }
+  return isInsideWindow;
+};
+
+const _updateScrollableHandler = () => {
+  if (elRoot.value) {
+    const el = elRoot.value as HTMLElement;
+    _updateScrollable(el);
+  }
+};
+
+const scroll = (e: Event) => {
+  notificationEnabled.value = false;
+
+  const el = e.target as HTMLElement;
+
+  if (el && isElementScrollable(el, props.isVertical)) {
+    scrollableFrom.value = canScrollFrom(el, props.isVertical);
+    scrollableTo.value = canScrollTo(el, props.isVertical);
+  }
+};
+
+onMounted(() => {
+  initialize();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('load', _updateScrollableHandler);
+
+  if (scrollHandler.value) {
+    window.removeEventListener('scroll', scrollHandler.value);
+  }
+});
+</script>
+
 <template>
   <div
     :scrollable-theme="theme"
     class="scrollable-container"
   >
     <div
-      ref="root"
-      :is-vertical="isVertical"
-      :is-horizontal="!isVertical"
-      :is-scrollable="isScrollable"
+      ref="elRoot"
+      :is-vertical="isVertical || null"
+      :is-horizontal="!isVertical || null"
+      :is-scrollable="isScrollable || null"
       class="scrollable-container__content"
       @scroll="scroll"
     >
@@ -20,8 +195,8 @@
         >
           <div class="scrollable-container__picture">
             <svg
-              :is-vertical="isVertical"
-              :is-horizontal="!isVertical"
+              :is-vertical="isVertical || null"
+              :is-horizontal="!isVertical || null"
               :width="size * 0.24"
               :height="size * 0.24"
               class="scrollable-container__pointer"
@@ -45,8 +220,8 @@
     <transition name="shadow-from">
       <div
         v-if="scrollableFrom"
-        :is-vertical="isVertical"
-        :is-horizontal="!isVertical"
+        :is-vertical="isVertical || null"
+        :is-horizontal="!isVertical || null"
         :style="{left: shadowFromX}"
         class="scrollable-container__shadow--from"
       />
@@ -54,192 +229,14 @@
     <transition name="shadow-to">
       <div
         v-if="scrollableTo"
-        :is-vertical="isVertical"
-        :is-horizontal="!isVertical"
+        :is-vertical="isVertical || null"
+        :is-horizontal="!isVertical || null"
         :style="{right: shadowToX}"
         class="scrollable-container__shadow--to"
       />
     </transition>
   </div>
 </template>
-
-<script>
-import { throttle } from 'throttle-debounce';
-
-const isScrollable = (el, isVertical = false) => {
-  if (isVertical) {
-    return el.clientHeight < el.scrollHeight;
-  }
-  return el.clientWidth < el.scrollWidth;
-};
-
-const canScrollFrom = (el, isVertical = false) => {
-  if (isVertical) {
-    return el.scrollTop !== 0;
-  }
-  return el.scrollLeft !== 0;
-};
-
-const canScrollTo = (el, isVertical = false) => {
-  if (isVertical) {
-    return el.scrollTop + el.offsetHeight !== el.scrollHeight;
-  }
-  return el.scrollLeft + el.offsetWidth !== el.scrollWidth;
-};
-
-const getThemeColor = theme => {
-  switch (theme) {
-    case 'light':
-      return '#fff';
-    case 'dark':
-      return '#111';
-  }
-  return '#fff';
-};
-
-const getThemeBackgroundColor = theme => {
-  switch (theme) {
-    case 'light':
-      return 'rgba(0, 0, 0, .5)';
-    case 'dark':
-      return 'rgba(255, 255, 255, .8)';
-  }
-  return 'rgba(0, 0, 0, .5)';
-};
-
-export default {
-  props: {
-    size: {
-      type: Number,
-      default: 100,
-    },
-    theme: {
-      type: String,
-      default: 'light',
-    },
-    label: {
-      type: String,
-      default: 'scrollable',
-    },
-    isVertical: {
-      type: Boolean,
-      default: false,
-    },
-    shadowFromX: {
-      type: String,
-      default: '0',
-    },
-    shadowToX: {
-      type: String,
-      default: '0',
-    },
-  },
-
-  data() {
-    return {
-      once: false,
-      notificationEnabled: false,
-      notificationStyle: {
-        top: 0,
-        left: 0,
-        width: this.size + 'px',
-        height: this.size + 'px',
-        color: getThemeColor(this.theme),
-        backgroundColor: getThemeBackgroundColor(this.theme),
-        borderRadius: this.size * 0.1 + 'px',
-      },
-      messageStyle: {
-        fontSize: this.size * 0.12 + 'px',
-      },
-      scrollableFrom: false,
-      scrollableTo: false,
-      scrollHandler: null,
-    };
-  },
-
-  computed: {
-    isScrollable() {
-      return this.scrollableFrom || this.scrollableTo;
-    },
-  },
-
-  mounted() {
-    this.initialize();
-  },
-
-  beforeDestroy() {
-    window.removeEventListener('load', this._updateScrollableHandler);
-
-    if (this.scrollHandler) {
-      window.removeEventListener('scroll', this.scrollHandler);
-    }
-  },
-
-  methods: {
-    initialize() {
-      const elRoot = this.$refs.root;
-
-      this.reset();
-
-      // If the container element is displayed inside the window when the window is loaded, the notification element display.
-      window.addEventListener('load', this._updateScrollableHandler);
-
-      const handleScroll = throttle(150, () => {
-        if (this._updateScrollable(elRoot)) {
-          window.removeEventListener('scroll', handleScroll);
-          this.scrollHandler = null;
-        }
-      });
-
-      window.addEventListener('scroll', handleScroll);
-      this.scrollHandler = handleScroll;
-    },
-
-    reset() {
-      const elRoot = this.$refs.root;
-      this.once = false;
-
-      this.notificationStyle.top = (elRoot.clientHeight - this.size) / 2 + 'px';
-      this.notificationStyle.left = (elRoot.clientWidth - this.size) / 2 + 'px';
-
-      if (isScrollable(elRoot, this.isVertical)) {
-        this.scrollableFrom = false;
-        this.scrollableTo = true;
-      }
-
-      this._updateScrollable(elRoot);
-    },
-
-    _updateScrollable(elRoot) {
-      const rect = elRoot.getBoundingClientRect();
-      const isInsideWindow = rect.top < window.innerHeight && rect.top > 0;
-      if (!this.once && isInsideWindow) {
-        this.once = true;
-        this.notificationEnabled = isScrollable(elRoot, this.isVertical);
-      }
-      return isInsideWindow;
-    },
-
-    _updateScrollableHandler() {
-      const elRoot = this.$refs.root;
-      if (elRoot) {
-        this._updateScrollable(elRoot);
-      }
-    },
-
-    scroll(e) {
-      this.notificationEnabled = false;
-
-      const el = e.target;
-
-      if (isScrollable(el, this.isVertical)) {
-        this.scrollableFrom = canScrollFrom(el, this.isVertical);
-        this.scrollableTo = canScrollTo(el, this.isVertical);
-      }
-    },
-  },
-};
-</script>
 
 <style lang="scss" scoped>
 .scrollable-container {
@@ -295,6 +292,7 @@ export default {
     position: relative;
     height: 50%;
     padding: 0 1em;
+    font-size: var(--vue-scrollable-container-font-size, inherit);
     text-align: center;
     line-height: 1.4;
   }
