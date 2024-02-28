@@ -2,9 +2,11 @@
 
 A Vue.js component to show scrollable hint.
 
+From v2.0.0, it works for Vue 3.
+
 ## Demo
 
-[Demo](http://sandbox.serendip.ws/vue-scrollable-container.html)
+[Demo](https://sandbox.serendip.ws/vue-scrollable-container.html)
 
 
 ## Install
@@ -12,8 +14,9 @@ A Vue.js component to show scrollable hint.
 ### Browser
 
 ```html
-<script src="vue.js"></script>
-<script src="vue-scrollable-container.min.js"></script>
+<script src="vue.global.prod.js"></script>
+<script src="https://unpkg.com/throttle-debounce@5/umd/index.js"></script>
+<script src="vue-scrollable-container.umd.js"></script>
 ```
 
 
@@ -35,18 +38,23 @@ npm install --save vue-scrollable-container
   </scrollable-container>
 </div>
 
-<script src="vue.js"></script>
-<script src="vue-scrollable-container.min.js"></script>
+<script src="vue.global.prod.js"></script>
+<script src="https://unpkg.com/throttle-debounce@5/umd/index.js"></script>
+<script src="vue-scrollable-container.umd.js"></script>
 <script>
-Vue.use(ScrollableContainer);
-new Vue({
-  el: '#app'
-});
+const { createApp } = Vue;
+const { ScrollableContainer } = SwsVueScrollableContainer;
+
+createApp({
+  components: {
+    ScrollableContainer,
+  },
+}).mount('#app');
 </script>
 ```
 
 
-### SFC
+### SFC (TypeScript)
 
 ```vue
 <template>
@@ -55,14 +63,8 @@ new Vue({
   </scrollable-container>
 </template>
 
-<script>
-import ScrollableContainer from 'vue-scrollable-container';
-
-export default {
-  components: {
-    ScrollableContainer
-  }
-}
+<script setup lang="ts">
+import { ScrollableContainer } from 'vue-scrollable-container';
 </script>
 ```
 

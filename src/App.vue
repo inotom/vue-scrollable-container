@@ -1,121 +1,11 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width">
-<title>vue-scrollable-container Vue.js component demo</title>
-<style>
-html {
-  font-size: 62.5%;
-}
-body {
-  margin-bottom: 5em;
-  font-size: 1.2rem;
-}
-hr {
-  margin: 3em 0;
-  border: 0 none;
-  border-top: 1px solid #ccc;
-}
-.app {
-  max-width: 960px;
-  margin: 0 auto;
-}
-.table-container--dark {
-  color: #fff;
-  background-color: #333;
-}
-.table {
-  margin: 0 auto;
-}
-.table--small {
-  width: 300px;
-}
-.table--normal {
-  width: 960px;
-}
-.table--wide {
-  width: 2000px;
-}
-.table,
-.table td,
-.table th {
-  border: 1px solid #666;
-  border-collapse: collapse;
-}
-.table td,
-.table th {
-  padding: 1em;
-}
-.table th {
-  background-color: #fee;
-}
-.table--dark th {
-  background-color: #633;
-}
-.table--sticky,
-.table--sticky td,
-.table--sticky th {
-  border-collapse: separate;
-  border-spacing: 0;
-}
-.table__head--start,
-.table__head--end {
-  box-sizing: border-box;
-  position: -webkit-sticky;
-  position: sticky;
-}
-.table__head--start {
-  left: 0;
-  width: 10em;
-}
-.table__head--end {
-  right: 0;
-  width: 7em;
-}
+<script setup lang="ts">
+import ScrollableContainer from './components/ScrollableContainer.vue';
+import AsyncBlock from './components/AsyncBlock.vue';
+import TabSwitch from './components/TabSwitch.vue';
+</script>
 
-.vertical-scroll-container {
-  max-height: 200px;
-}
-.vertical-scroll-container p:first-of-type {
-  margin-top: 0;
-}
-.vertical-scroll-container p:last-of-type {
-  margin-bottom: 0;
-}
-
-.async-block {
-  max-height: 200px;
-}
-
-.tab {
-  display: flex;
-  margin: .5em 0;
-}
-.tab__item {
-  margin-right: .5em;
-  padding: 1em;
-  color: #fff;
-  background-color: #999;
-  text-decoration: none;
-}
-.tab__item[is-selected] {
-  background-color: #966;
-}
-
-.tab-block--loading,
-.tab-block {
-  height: 200px;
-}
-
-.tab-content {
-  max-height: 200px;
-}
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stickyfill/2.1.0/stickyfill.min.js"></script>
-</head>
-<body>
-  <div class="app" id="app">
+<template>
+  <div class="app">
     <h1>vue-scrollable-container Vue.js component demo</h1>
 
     <h2>horizontal scroll</h2>
@@ -375,167 +265,85 @@ hr {
     <h2>tab swich scroll box</h2>
 
     <tab-switch></tab-switch>
-
   </div>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
-<script src="vue-scrollable-container.min.js"></script>
+</template>
 
-<script type="text/x-template" id="async-block-template">
-  <div class="async-block-container">
-    <scrollable-container
-      :is-vertical="true"
-      ref="asyncBlockScrollableContainer"
-    >
-      <div class="async-block">
-        <div
-          v-for="(item, index) in lines"
-          :key="index"
-          class="async-block__lines"
-        >
-          LINE{{ index }} - {{ item }}
-        </div>
-      </div>
-    </scrollable-container>
-    <div>
-      <input type="button" value="Update" @click="updateLine">
-    </div>
-  </div>
-</script>
+<style>
+:root {
+  --vue-scrollable-container-font-size: 12px;
+}
+body {
+  margin-bottom: 5em;
+}
+hr {
+  margin: 3em 0;
+  border: 0 none;
+  border-top: 1px solid #ccc;
+}
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+}
+.table-container--dark {
+  color: #fff;
+  background-color: #333;
+}
+.table {
+  margin: 0 auto;
+}
+.table--small {
+  width: 300px;
+}
+.table--normal {
+  width: 960px;
+}
+.table--wide {
+  width: 2000px;
+}
+.table,
+.table td,
+.table th {
+  border: 1px solid #666;
+  border-collapse: collapse;
+}
+.table td,
+.table th {
+  padding: 1em;
+}
+.table th {
+  background-color: #fee;
+}
+.table--dark th {
+  background-color: #633;
+}
+.table--sticky,
+.table--sticky td,
+.table--sticky th {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.table__head--start,
+.table__head--end {
+  box-sizing: border-box;
+  position: -webkit-sticky;
+  position: sticky;
+}
+.table__head--start {
+  left: 0;
+  width: 10em;
+}
+.table__head--end {
+  right: 0;
+  width: 7em;
+}
 
-<script type="text/x-template" id="tab-switch-template">
-  <div>
-    <div class="tab">
-      <a
-        class="tab__item"
-        href="#"
-        v-for="(item, index) in pages"
-        :key="item.id"
-        :is-selected="selectedIndex === index"
-        @click.prevent="selectTab(index)"
-      >
-        TAB{{ index }}
-      </a>
-    </div>
-    <div
-      class="tab-block--loading"
-      v-if="isLoading"
-    >
-      Loading...
-    </div>
-    <div
-      class="tab-block"
-      v-else
-    >
-      <scrollable-container
-        :is-vertical="true"
-        ref="tabScrollableContainer"
-      >
-        <div class="tab-content">
-          <div
-            v-for="(line, index) in lines"
-            :key="index"
-            class="tab-content__line"
-          >
-            {{ line }}
-          </div>
-        </div>
-      </scrollable-container>
-    </div>
-  </div>
-</script>
-
-<script>
-Vue.use(ScrollableContainer);
-
-Vue.component('async-block', {
-  template: '#async-block-template',
-
-  data: function() {
-    return {
-      lines: [],
-    };
-  },
-
-  mounted: function() {
-    setTimeout(function() {
-      this.lines = [
-        'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-        'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      ];
-      this.$nextTick(function() {
-        this.$refs.asyncBlockScrollableContainer.reset();
-      });
-    }.bind(this), 1000);
-  },
-
-  methods: {
-    updateLine:function() {
-      this.lines.push('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
-      this.$nextTick(function() {
-        this.$refs.asyncBlockScrollableContainer.reset();
-      });
-    },
-  },
-});
-
-Vue.component('tab-switch', {
-  template: '#tab-switch-template',
-
-  data: function() {
-    return {
-      isLoading: false,
-      selectedIndex: 0,
-      pages: [
-        {
-          id: 0,
-          lines: [
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-          ],
-        },
-        {
-          id: 1,
-          lines: [
-            'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-          ],
-        },
-      ],
-    };
-  },
-
-  computed: {
-    lines: function() {
-      return this.pages[this.selectedIndex].lines;
-    },
-  },
-
-  mounted: function() {
-    this.selectTab(0);
-  },
-
-  methods: {
-    selectTab: function(index) {
-      this.isLoading = true;
-      setTimeout(function() {
-        this.isLoading = false;
-        this.selectedIndex = index;
-        this.$nextTick(function() {
-          this.$refs.tabScrollableContainer.reset();
-        });
-      }.bind(this), 500);
-    },
-  },
-});
-
-new Vue({
-  el: '#app'
-});
-</script>
-</body>
-</html>
+.vertical-scroll-container {
+  max-height: 200px;
+}
+.vertical-scroll-container p:first-of-type {
+  margin-top: 0;
+}
+.vertical-scroll-container p:last-of-type {
+  margin-bottom: 0;
+}
+</style>
